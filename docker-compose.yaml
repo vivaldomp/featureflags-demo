@@ -1,0 +1,47 @@
+version: "3.7"
+services:
+  publish_rules:
+    image: minio/mc:latest
+    volumes:
+      - ./scripts:/opt/scripts
+    working_dir: /opt/scripts
+    entrypoint: /bin/bash -c "/opt/scripts/import.sh"
+    environment:
+      - MINIO_ACCESS_KEY=s3manager
+      - MINIO_SECRET_KEY=s3manager
+      - MINIO_HOST=http://s3:9000
+    depends_on:
+      - s3
+    restart: "no"
+
+  s3:
+    image: minio/minio:latest
+    command: server /data
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - ./data:/data
+    environment:
+      - MINIO_ACCESS_KEY=s3manager
+      - MINIO_SECRET_KEY=s3manager
+      - MINIO_ADDRESS=0.0.0.0:9000
+      - MINIO_CONSOLE_ADDRESS=0.0.0.0:9001
+  web:
+    image: nginx:latest
+    ports:
+    - "8080:80"
+    volumes:
+      - ./public:/usr/share/nginx/html
+
+  flag:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      - ENDPOINT=s3:9000
+      - ACCESS_KEY_ID=s3manager
+      - SECRET_ACCESS_KEY=s3manager
+      - DEFAULT_BUCKET=flags
+    depends_on:
+      - s3

@@ -1,0 +1,16 @@
+{
+  "TOGGLE_VIEW_GROW_RATE": {
+    "value": false,
+    "condition": {
+      "email": "user1@acme.com",
+      "replace": true
+    }
+  },
+  "TOGGLE_HEADER_BACKGROUND_COLOR": {
+    "value": "bg-blue-500",
+    "condition": {
+      "email": "user2@acme.com",
+      "replace": "bg-red-400"
+    }
+  }
+}
